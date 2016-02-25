@@ -1,0 +1,152 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:orientation="vertical"
+    android:splitMotionEvents="false"
+>
+
+    <EditText
+        android:id="@+id/chunjiin_text"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.3"
+        android:text="천지인"
+        android:descendantFocusability="beforeDescendants"
+        android:focusable="true"
+    	android:focusableInTouchMode="true"
+        android:ems="10" >
+        <requestFocus />
+    </EditText>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.15"
+        android:splitMotionEvents="false" >
+
+        <Button
+            android:id="@+id/chunjiin_button1"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/chunjiin_button2"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/chunjiin_button3"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="Button" />
+
+    </LinearLayout>
+       <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.15"
+        android:splitMotionEvents="false" >
+
+        <Button
+            android:id="@+id/chunjiin_button4"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/chunjiin_button5"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/chunjiin_button6"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="Button" />
+
+    </LinearLayout>
+       <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.15"
+        android:splitMotionEvents="false" >
+
+        <Button
+            android:id="@+id/chunjiin_button7"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/chunjiin_button8"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/chunjiin_button9"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="Button" />
+
+    </LinearLayout>
+       <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.15"
+        android:splitMotionEvents="false" >
+
+        <Button
+            android:id="@+id/chunjiin_buttonex1"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="띄어쓰기" />
+
+        <Button
+            android:id="@+id/chunjiin_button0"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/chunjiin_buttonex2"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="지우기" />
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.1"
+        android:splitMotionEvents="false" >
+
+        <Button
+            android:id="@+id/chunjiin_buttonex3"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="바꾸기" />
+
+    </LinearLayout>
+    
+    
+</LinearLayout>
