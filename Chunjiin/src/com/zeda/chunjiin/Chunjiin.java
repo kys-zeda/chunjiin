@@ -168,7 +168,8 @@ public class Chunjiin
 			boolean dotflag = false;
 			boolean doubleflag = false;
 			boolean spaceflag = false;
-			
+			boolean impossiblejongsungflag = false;
+			char unicode;
 			String real_jongsung = checkDouble(hangul.jongsung, hangul.jongsung2);
 			if(real_jongsung.length() == 0)
 			{
@@ -176,8 +177,18 @@ public class Chunjiin
 				if(hangul.jongsung2.length() != 0)
 					doubleflag = true;
 			}
-	
-			char unicode = (char)getUnicode(real_jongsung);
+
+			//bug fixed, 16.4.22 ~
+			//added impossible jongsungflag.
+			if(hangul.jongsung.equals("„ÖÉ") || hangul.jongsung.equals("„Öâ") || hangul.jongsung.equals("„Ñ∏"))
+			{
+				doubleflag = true;
+				impossiblejongsungflag = true;
+				unicode = (char)getUnicode("");
+			}
+			else
+				unicode = (char)getUnicode(real_jongsung);
+			// ~ bug fixed, 16.4.22
 
 			if(!hangul.flag_writing)
 				str += origin.substring(0, position);
@@ -205,16 +216,19 @@ public class Chunjiin
 			
 			if(doubleflag)
 			{
-				str += hangul.jongsung2;
+				if(impossiblejongsungflag)
+					str += hangul.jongsung;
+				else
+					str += hangul.jongsung2;
 			}
-			if(hangul.jungsung.equals("°§"))
+			if(hangul.jungsung.equals("¬∑"))
 			{
-				str += "°§";
+				str += "¬∑";
 				dotflag = true;
 			}
-			else if(hangul.jungsung.equals("°•"))
+			else if(hangul.jungsung.equals("‚Ä•"))
 			{
-				str += "°•";
+				str += "‚Ä•";
 				dotflag = true;
 			}
 			
@@ -310,7 +324,7 @@ public class Chunjiin
 	}
 	private void engMake(int input)
 	{
-		if(input == 10) // ∂ÁæÓæ≤±‚
+		if(input == 10) // ÎùÑÏñ¥Ïì∞Í∏∞
 		{
 			if(engnum.length()==0)
 				engnum = " ";
@@ -318,7 +332,7 @@ public class Chunjiin
 				engnum = "";
 			flag_initengnum = true;
 		}
-		else if(input == 11) // ¡ˆøÏ±‚
+		else if(input == 11) // ÏßÄÏö∞Í∏∞
 		{
 			delete();
 			init_engnum();
@@ -366,9 +380,9 @@ public class Chunjiin
 	}
 	private void numMake(int input)
 	{
-		if(input == 10) // ∂ÁæÓæ≤±‚
+		if(input == 10) // ÎùÑÏñ¥Ïì∞Í∏∞
 			engnum = " ";
-		else if(input == 11) // ¡ˆøÏ±‚
+		else if(input == 11) // ÏßÄÏö∞Í∏∞
 			delete();
 		else
 			engnum = Integer.toString(input);
@@ -380,14 +394,14 @@ public class Chunjiin
 		String beforedata = "";
 		String nowdata = "";
 		String overdata = "";
-		if(input == 10) //∂ÁæÓæ≤±‚
+		if(input == 10) //ÎùÑÏñ¥Ïì∞Í∏∞
 		{
 			if(hangul.flag_writing)
 				hangul.init();
 			else
 				hangul.flag_space = true;
 		}
-		else if(input == 11) //¡ˆøÏ±‚
+		else if(input == 11) //ÏßÄÏö∞Í∏∞
 		{
 			if(hangul.step == 0)
 			{
@@ -401,7 +415,7 @@ public class Chunjiin
 			}
 			else if(hangul.step == 1)
 			{
-				if(hangul.jungsung.equals("°§") || hangul.jungsung.equals("°•"))
+				if(hangul.jungsung.equals("¬∑") || hangul.jungsung.equals("‚Ä•"))
 				{
 					delete();
 					if(hangul.chosung.length() == 0)
@@ -421,17 +435,21 @@ public class Chunjiin
 				hangul.step = 2;
 			}
 		}
-		else if(input == 1 || input == 2 || input == 3) //∏¿Ω
+		else if(input == 1 || input == 2 || input == 3) //Î™®Ïùå
 		{
-			//πﬁƒßø°º≠ ∂ºæÓø¿¥¬∞≈ √ﬂ∞°«ÿæﬂ«‘
+			//Î∞õÏπ®ÏóêÏÑú ÎñºÏñ¥Ïò§ÎäîÍ±∞ Ï∂îÍ∞ÄÌï¥ÏïºÌï®
 			boolean batchim = false;
 			if(hangul.step == 2)
 			{
 				delete();
 				String s = hangul.jongsung;
-				hangul.jongsung = "";
-				hangul.flag_writing = false;
-				write(now_mode);
+				//bug fixed, 16.4.22 ~
+				if(!hangul.flag_doubled) {
+					hangul.jongsung = "";
+					hangul.flag_writing = false;
+					write(now_mode);
+				}
+				// ~ bug fixed, 16.4.22
 				hangul.init();
 				hangul.chosung = s;
 				hangul.step = 0;
@@ -456,93 +474,93 @@ public class Chunjiin
 			}
 			beforedata = hangul.jungsung;
 			hangul.step = 1;
-			if(input == 1) // §” §√ §≈ §¿ §ƒ §∆§¬ §  §œ §… §Õ §Œ §“
+			if(input == 1) // „Ö£ „Öì „Öï „Öê „Öî „Öñ„Öí „Öö „Öü „Öô „Öù „Öû „Ö¢
 			{
-				if(beforedata.length() == 0)		nowdata = "§”";
-				else if(beforedata.equals("°§"))
+				if(beforedata.length() == 0)		nowdata = "„Ö£";
+				else if(beforedata.equals("¬∑"))
 				{
-					nowdata = "§√";
+					nowdata = "„Öì";
 					hangul.flag_dotused = true;
 				}
-				else if(beforedata.equals("°•"))
+				else if(beforedata.equals("‚Ä•"))
 				{
-					nowdata = "§≈";
+					nowdata = "„Öï";
 					hangul.flag_dotused = true;
 				}
-				else if(beforedata.equals("§ø"))	nowdata = "§¿";
-				else if(beforedata.equals("§¡"))	nowdata = "§¬";
-				else if(beforedata.equals("§√"))	nowdata = "§ƒ";
-				else if(beforedata.equals("§≈"))	nowdata = "§∆";
-				else if(beforedata.equals("§«"))	nowdata = "§ ";
-				else if(beforedata.equals("§Ã"))	nowdata = "§œ";
-				else if(beforedata.equals("§–"))	nowdata = "§Õ";
-				else if(beforedata.equals("§»"))	nowdata = "§…";
-				else if(beforedata.equals("§Õ"))	nowdata = "§Œ";
-				else if(beforedata.equals("§—"))	nowdata = "§“";
+				else if(beforedata.equals("„Öè"))	nowdata = "„Öê";
+				else if(beforedata.equals("„Öë"))	nowdata = "„Öí";
+				else if(beforedata.equals("„Öì"))	nowdata = "„Öî";
+				else if(beforedata.equals("„Öï"))	nowdata = "„Öñ";
+				else if(beforedata.equals("„Öó"))	nowdata = "„Öö";
+				else if(beforedata.equals("„Öú"))	nowdata = "„Öü";
+				else if(beforedata.equals("„Ö†"))	nowdata = "„Öù";
+				else if(beforedata.equals("„Öò"))	nowdata = "„Öô";
+				else if(beforedata.equals("„Öù"))	nowdata = "„Öû";
+				else if(beforedata.equals("„Ö°"))	nowdata = "„Ö¢";
 				else
 				{
 					hangul.init();
 					hangul.step = 1;
-					nowdata = "§”";
+					nowdata = "„Ö£";
 				}
 			}
-			else if(input == 2) // °§,°•,§ø,§¡,§Ã,§–,§»
+			else if(input == 2) // ¬∑,‚Ä•,„Öè,„Öë,„Öú,„Ö†,„Öò
 			{
 				if(beforedata.length() == 0)
 				{
-					nowdata = "°§";
+					nowdata = "¬∑";
 					if(batchim)
 						hangul.flag_addcursor = true;
 				}
-				else if(beforedata.equals("°§"))
+				else if(beforedata.equals("¬∑"))
 				{
-					nowdata = "°•";
+					nowdata = "‚Ä•";
 					hangul.flag_dotused = true;
 				}
-				else if(beforedata.equals("°•"))
+				else if(beforedata.equals("‚Ä•"))
 				{
-					nowdata = "°§";
+					nowdata = "¬∑";
 					hangul.flag_dotused = true;
 				}
-				else if(beforedata.equals("§”"))	nowdata = "§ø";
-				else if(beforedata.equals("§ø"))	nowdata = "§¡";
-				else if(beforedata.equals("§—"))	nowdata = "§Ã";
-				else if(beforedata.equals("§Ã"))	nowdata = "§–";
-				else if(beforedata.equals("§ "))	nowdata = "§»";
+				else if(beforedata.equals("„Ö£"))	nowdata = "„Öè";
+				else if(beforedata.equals("„Öè"))	nowdata = "„Öë";
+				else if(beforedata.equals("„Ö°"))	nowdata = "„Öú";
+				else if(beforedata.equals("„Öú"))	nowdata = "„Ö†";
+				else if(beforedata.equals("„Öö"))	nowdata = "„Öò";
 				else
 				{
 					hangul.init();
 					hangul.step = 1;
-					nowdata = "°§";
+					nowdata = "¬∑";
 				}
 			}
-			else if(input == 3) // §—, §«, §À
+			else if(input == 3) // „Ö°, „Öó, „Öõ
 			{
-				if(beforedata.length() == 0)		nowdata = "§—";
-				else if(beforedata.equals("°§"))
+				if(beforedata.length() == 0)		nowdata = "„Ö°";
+				else if(beforedata.equals("¬∑"))
 				{
-					nowdata = "§«";
+					nowdata = "„Öó";
 					hangul.flag_dotused = true;
 				}
-				else if(beforedata.equals("°•"))
+				else if(beforedata.equals("‚Ä•"))
 				{
-					nowdata = "§À";
+					nowdata = "„Öõ";
 					hangul.flag_dotused = true;
 				}
 				else
 				{
 					hangul.init();
 					hangul.step = 1;
-					nowdata = "§—";
+					nowdata = "„Ö°";
 				}
 			}
 			hangul.jungsung = nowdata;
 		}
-		else //¿⁄¿Ω
+		else //ÏûêÏùå
 		{
 			if(hangul.step == 1)
 			{
-				if(hangul.jungsung.equals("°§") || hangul.jungsung.equals("°•"))
+				if(hangul.jungsung.equals("¬∑") || hangul.jungsung.equals("‚Ä•"))
 					hangul.init();
 				else
 					hangul.step = 2;
@@ -551,207 +569,207 @@ public class Chunjiin
 			else if(hangul.step == 2)	beforedata = hangul.jongsung;
 			else if(hangul.step == 3)	beforedata = hangul.jongsung2;
 
-			if(input == 4) // §°, §ª, §¢, §™
+			if(input == 4) // „Ñ±, „Öã, „Ñ≤, „Ñ∫
 			{
 				if(beforedata.length() == 0)
 				{
 					if(hangul.step == 2)
 					{
 						if(hangul.chosung.length() == 0)
-							overdata = "§°";
+							overdata = "„Ñ±";
 						else
-							nowdata = "§°";
+							nowdata = "„Ñ±";
 					}
 					else
-						nowdata = "§°";
+						nowdata = "„Ñ±";
 				}
-				else if(beforedata.equals("§°"))
-					nowdata = "§ª";
-				else if(beforedata.equals("§ª"))
-					nowdata = "§¢";
-				else if(beforedata.equals("§¢"))
-					nowdata = "§°";
-				else if(beforedata.equals("§©") && hangul.step == 2)
+				else if(beforedata.equals("„Ñ±"))
+					nowdata = "„Öã";
+				else if(beforedata.equals("„Öã"))
+					nowdata = "„Ñ≤";
+				else if(beforedata.equals("„Ñ≤"))
+					nowdata = "„Ñ±";
+				else if(beforedata.equals("„Ñπ") && hangul.step == 2)
 				{
 					hangul.step = 3;
-					nowdata = "§°";
+					nowdata = "„Ñ±";
 				}
 				else
-					overdata = "§°";
+					overdata = "„Ñ±";
 			}
-			else if(input == 5) // §§ §©
+			else if(input == 5) // „Ñ¥ „Ñπ
 			{
 				if (beforedata.length() == 0)
 				{
 					if(hangul.step == 2)
 					{
 						if(hangul.chosung.length() == 0)
-							overdata = "§§";
+							overdata = "„Ñ¥";
 						else
-							nowdata = "§§";
+							nowdata = "„Ñ¥";
 					}
 					else
-						nowdata = "§§";
+						nowdata = "„Ñ¥";
 				}
-				else if (beforedata.equals("§§"))
-					nowdata = "§©";
-				else if (beforedata.equals("§©"))
-					nowdata = "§§";
+				else if (beforedata.equals("„Ñ¥"))
+					nowdata = "„Ñπ";
+				else if (beforedata.equals("„Ñπ"))
+					nowdata = "„Ñ¥";
 				else
-					overdata = "§§";
+					overdata = "„Ñ¥";
 			}
-			else if(input == 6) // §ß, §º, §®, §Æ
+			else if(input == 6) // „Ñ∑, „Öå, „Ñ∏, „Ñæ
 			{
 				if (beforedata.length() == 0)
 				{
 					if(hangul.step == 2)
 					{
 						if(hangul.chosung.length() == 0)
-							overdata = "§ß";
+							overdata = "„Ñ∑";
 						else
-							nowdata = "§ß";
+							nowdata = "„Ñ∑";
 					}
 					else
-						nowdata = "§ß";
+						nowdata = "„Ñ∑";
 				}
-				else if (beforedata.equals("§ß"))
-					nowdata = "§º";
-				else if (beforedata.equals("§º"))
-					nowdata = "§®";
-				else if (beforedata.equals("§®"))
-					nowdata = "§ß";
-				else if(beforedata.equals("§©") && hangul.step == 2)
+				else if (beforedata.equals("„Ñ∑"))
+					nowdata = "„Öå";
+				else if (beforedata.equals("„Öå"))
+					nowdata = "„Ñ∏";
+				else if (beforedata.equals("„Ñ∏"))
+					nowdata = "„Ñ∑";
+				else if(beforedata.equals("„Ñπ") && hangul.step == 2)
 				{
 					hangul.step = 3;
-					nowdata = "§ß";
+					nowdata = "„Ñ∑";
 				}
 				else
-					overdata = "§ß";
+					overdata = "„Ñ∑";
 			}
-			else if(input == 7) // §≤, §Ω, §≥, §¨, §Ø
+			else if(input == 7) // „ÖÇ, „Öç, „ÖÉ, „Ñº, „Ñø
 			{
 				if (beforedata.length() == 0)
 				{
 					if(hangul.step == 2)
 					{
 						if(hangul.chosung.length() == 0)
-							overdata = "§≤";
+							overdata = "„ÖÇ";
 						else
-							nowdata = "§≤";
+							nowdata = "„ÖÇ";
 					}
 					else
-						nowdata = "§≤";
+						nowdata = "„ÖÇ";
 				}
-				else if (beforedata.equals("§≤"))
-					nowdata = "§Ω";
-				else if (beforedata.equals("§Ω"))
-					nowdata = "§≥";
-				else if (beforedata.equals("§≥"))
-					nowdata = "§≤";
-				else if(beforedata.equals("§©") && hangul.step == 2)
+				else if (beforedata.equals("„ÖÇ"))
+					nowdata = "„Öç";
+				else if (beforedata.equals("„Öç"))
+					nowdata = "„ÖÉ";
+				else if (beforedata.equals("„ÖÉ"))
+					nowdata = "„ÖÇ";
+				else if(beforedata.equals("„Ñπ") && hangul.step == 2)
 				{
 					hangul.step = 3;
-					nowdata = "§≤";
+					nowdata = "„ÖÇ";
 				}
 				else
-					overdata = "§≤";
+					overdata = "„ÖÇ";
 			}
-			else if(input == 8) // §µ, §æ, §∂, §£, §¶, §≠, §∞, §¥
+			else if(input == 8) // „ÖÖ, „Öé, „ÖÜ, „Ñ≥, „Ñ∂, „ÑΩ, „ÖÄ, „ÖÑ
 			{
 				if (beforedata.length() == 0)
 				{
 					if(hangul.step == 2)
 					{
 						if(hangul.chosung.length() == 0)
-							overdata = "§µ";
+							overdata = "„ÖÖ";
 						else
-							nowdata = "§µ";
+							nowdata = "„ÖÖ";
 					}
 					else
-						nowdata = "§µ";
+						nowdata = "„ÖÖ";
 				}
-				else if (beforedata.equals("§µ"))
-					nowdata = "§æ";
-				else if (beforedata.equals("§æ"))
-					nowdata = "§∂";
-				else if (beforedata.equals("§∂"))
-					nowdata = "§µ";
-				else if(beforedata.equals("§°") && hangul.step == 2)
+				else if (beforedata.equals("„ÖÖ"))
+					nowdata = "„Öé";
+				else if (beforedata.equals("„Öé"))
+					nowdata = "„ÖÜ";
+				else if (beforedata.equals("„ÖÜ"))
+					nowdata = "„ÖÖ";
+				else if(beforedata.equals("„Ñ±") && hangul.step == 2)
 				{
 					hangul.step = 3;
-					nowdata = "§µ";
+					nowdata = "„ÖÖ";
 				}
-				else if(beforedata.equals("§§") && hangul.step == 2)
+				else if(beforedata.equals("„Ñ¥") && hangul.step == 2)
 				{
 					hangul.step = 3;
-					nowdata = "§µ";
+					nowdata = "„ÖÖ";
 				}
-				else if(beforedata.equals("§©") && hangul.step == 2)
+				else if(beforedata.equals("„Ñπ") && hangul.step == 2)
 				{
 					hangul.step = 3;
-					nowdata = "§µ";
+					nowdata = "„ÖÖ";
 				}
-				else if(beforedata.equals("§≤") && hangul.step == 2)
+				else if(beforedata.equals("„ÖÇ") && hangul.step == 2)
 				{
 					hangul.step = 3;
-					nowdata = "§µ";
+					nowdata = "„ÖÖ";
 				}
 				else
-					overdata = "§µ";
+					overdata = "„ÖÖ";
 			}
-			else if(input == 9) // §∏, §∫, §π, §•
+			else if(input == 9) // „Öà, „Öä, „Öâ, „Ñµ
 			{
 				if (beforedata.length() == 0)
 				{
 					if(hangul.step == 2)
 					{
 						if(hangul.chosung.length() == 0)
-							overdata = "§∏";
+							overdata = "„Öà";
 						else
-							nowdata = "§∏";
+							nowdata = "„Öà";
 					}
 					else
-						nowdata = "§∏";
+						nowdata = "„Öà";
 				}
-				else if (beforedata.equals("§∏"))
-					nowdata = "§∫";
-				else if (beforedata.equals("§∫"))
-					nowdata = "§π";
-				else if (beforedata.equals("§π"))
-					nowdata = "§∏";
-				else if(beforedata.equals("§§") && hangul.step == 2)
+				else if (beforedata.equals("„Öà"))
+					nowdata = "„Öä";
+				else if (beforedata.equals("„Öä"))
+					nowdata = "„Öâ";
+				else if (beforedata.equals("„Öâ"))
+					nowdata = "„Öà";
+				else if(beforedata.equals("„Ñ¥") && hangul.step == 2)
 				{
 					hangul.step = 3;
-					nowdata = "§∏";
+					nowdata = "„Öà";
 				}
 				else
-					overdata = "§∏";
+					overdata = "„Öà";
 			}
-			else if(input == 0) // §∑, §±, §´
+			else if(input == 0) // „Öá, „ÖÅ, „Ñª
 			{
 				if (beforedata.length() == 0)
 				{
 					if(hangul.step == 2)
 					{
 						if(hangul.chosung.length() == 0)
-							overdata = "§∑";
+							overdata = "„Öá";
 						else
-							nowdata = "§∑";
+							nowdata = "„Öá";
 					}
 					else
-						nowdata = "§∑";
+						nowdata = "„Öá";
 				}
-				else if (beforedata.equals("§∑"))
-					nowdata = "§±";
-				else if (beforedata.equals("§±"))
-					nowdata = "§∑";
-				else if(beforedata.equals("§©") && hangul.step == 2)
+				else if (beforedata.equals("„Öá"))
+					nowdata = "„ÖÅ";
+				else if (beforedata.equals("„ÖÅ"))
+					nowdata = "„Öá";
+				else if(beforedata.equals("„Ñπ") && hangul.step == 2)
 				{
 					hangul.step = 3;
-					nowdata = "§∑";
+					nowdata = "„Öá";
 				}
 				else
-					overdata = "§∑";
+					overdata = "„Öá";
 			}
 			
 			if(nowdata.length() > 0)
@@ -777,16 +795,16 @@ public class Chunjiin
 		switch(mode)
 		{
 			case HANGUL:
-				btn[0].setText("§∑§±");
-				btn[1].setText("§”");
-				btn[2].setText("°§");
-				btn[3].setText("§—");
-				btn[4].setText("§°§ª");
-				btn[5].setText("§§§©");
-				btn[6].setText("§ß§º");
-				btn[7].setText("§≤§Ω");
-				btn[8].setText("§µ§æ");
-				btn[9].setText("§∏§∫");
+				btn[0].setText("„Öá„ÖÅ");
+				btn[1].setText("„Ö£");
+				btn[2].setText("¬∑");
+				btn[3].setText("„Ö°");
+				btn[4].setText("„Ñ±„Öã");
+				btn[5].setText("„Ñ¥„Ñπ");
+				btn[6].setText("„Ñ∑„Öå");
+				btn[7].setText("„ÖÇ„Öç");
+				btn[8].setText("„ÖÖ„Öé");
+				btn[9].setText("„Öà„Öä");
 				break;
 			case UPPER_ENGLISH:
 				btn[0].setText("@?!");
@@ -824,93 +842,93 @@ public class Chunjiin
 	private int getUnicode(String real_jong)
 	{
 		int cho, jung, jong;
-		//√ º∫
+		//Ï¥àÏÑ±
 		if(hangul.chosung.length() == 0)
 		{
-			if(hangul.jungsung.length() == 0 || hangul.jungsung.equals("°§") || hangul.jungsung.equals("°•"))
+			if(hangul.jungsung.length() == 0 || hangul.jungsung.equals("¬∑") || hangul.jungsung.equals("‚Ä•"))
 				return 0;
 		}
 		
-		if ( hangul.chosung.equals("§°"))	cho = 0;
-		else if ( hangul.chosung.equals("§¢"))	cho = 1;
-		else if ( hangul.chosung.equals("§§"))	cho = 2;
-		else if ( hangul.chosung.equals("§ß"))	cho = 3;
-		else if ( hangul.chosung.equals("§®"))	cho = 4;
-		else if ( hangul.chosung.equals("§©"))	cho = 5;
-		else if ( hangul.chosung.equals("§±"))	cho = 6;
-		else if ( hangul.chosung.equals("§≤"))	cho = 7;
-		else if ( hangul.chosung.equals("§≥"))	cho = 8;
-		else if ( hangul.chosung.equals("§µ"))	cho = 9;
-		else if ( hangul.chosung.equals("§∂"))	cho = 10;
-		else if ( hangul.chosung.equals("§∑"))	cho = 11;
-		else if ( hangul.chosung.equals("§∏"))	cho = 12;
-		else if ( hangul.chosung.equals("§π"))	cho = 13;
-		else if ( hangul.chosung.equals("§∫"))	cho = 14;
-		else if ( hangul.chosung.equals("§ª"))	cho = 15;
-		else if ( hangul.chosung.equals("§º"))	cho = 16;
-		else if ( hangul.chosung.equals("§Ω"))	cho = 17;
-		else /*if ( hangul.chosung.equals("§æ"))*/	cho = 18;
+		if ( hangul.chosung.equals("„Ñ±"))	cho = 0;
+		else if ( hangul.chosung.equals("„Ñ≤"))	cho = 1;
+		else if ( hangul.chosung.equals("„Ñ¥"))	cho = 2;
+		else if ( hangul.chosung.equals("„Ñ∑"))	cho = 3;
+		else if ( hangul.chosung.equals("„Ñ∏"))	cho = 4;
+		else if ( hangul.chosung.equals("„Ñπ"))	cho = 5;
+		else if ( hangul.chosung.equals("„ÖÅ"))	cho = 6;
+		else if ( hangul.chosung.equals("„ÖÇ"))	cho = 7;
+		else if ( hangul.chosung.equals("„ÖÉ"))	cho = 8;
+		else if ( hangul.chosung.equals("„ÖÖ"))	cho = 9;
+		else if ( hangul.chosung.equals("„ÖÜ"))	cho = 10;
+		else if ( hangul.chosung.equals("„Öá"))	cho = 11;
+		else if ( hangul.chosung.equals("„Öà"))	cho = 12;
+		else if ( hangul.chosung.equals("„Öâ"))	cho = 13;
+		else if ( hangul.chosung.equals("„Öä"))	cho = 14;
+		else if ( hangul.chosung.equals("„Öã"))	cho = 15;
+		else if ( hangul.chosung.equals("„Öå"))	cho = 16;
+		else if ( hangul.chosung.equals("„Öç"))	cho = 17;
+		else /*if ( hangul.chosung.equals("„Öé"))*/	cho = 18;
 		
 		if (hangul.jungsung.length() == 0 && hangul.jongsung.length() == 0)
 			return 0x1100 + cho;
-		if (hangul.jungsung.equals("°§") || hangul.jungsung.equals("°•"))
+		if (hangul.jungsung.equals("¬∑") || hangul.jungsung.equals("‚Ä•"))
 			return 0x1100 + cho;
 		
-		// ¡ﬂº∫
-		if ( hangul.jungsung.equals("§ø"))		jung = 0;
-		else if ( hangul.jungsung.equals("§¿"))	jung = 1;
-		else if ( hangul.jungsung.equals("§¡"))	jung = 2;
-		else if ( hangul.jungsung.equals("§¬"))	jung = 3;
-		else if ( hangul.jungsung.equals("§√"))	jung = 4;
-		else if ( hangul.jungsung.equals("§ƒ"))	jung = 5;
-		else if ( hangul.jungsung.equals("§≈"))	jung = 6;
-		else if ( hangul.jungsung.equals("§∆"))	jung = 7;
-		else if ( hangul.jungsung.equals("§«"))	jung = 8;
-		else if ( hangul.jungsung.equals("§»"))	jung = 9;
-		else if ( hangul.jungsung.equals("§…"))	jung = 10;
-		else if ( hangul.jungsung.equals("§ "))	jung = 11;
-		else if ( hangul.jungsung.equals("§À"))	jung = 12;
-		else if ( hangul.jungsung.equals("§Ã"))	jung = 13;
-		else if ( hangul.jungsung.equals("§Õ"))	jung = 14;
-		else if ( hangul.jungsung.equals("§Œ"))	jung = 15;
-		else if ( hangul.jungsung.equals("§œ"))	jung = 16;
-		else if ( hangul.jungsung.equals("§–"))	jung = 17;
-		else if ( hangul.jungsung.equals("§—"))	jung = 18;
-		else if ( hangul.jungsung.equals("§“"))	jung = 19;
-		else /*if ( hangul.jungsung.equals("§”"))*/	jung = 20;
+		// Ï§ëÏÑ±
+		if ( hangul.jungsung.equals("„Öè"))		jung = 0;
+		else if ( hangul.jungsung.equals("„Öê"))	jung = 1;
+		else if ( hangul.jungsung.equals("„Öë"))	jung = 2;
+		else if ( hangul.jungsung.equals("„Öí"))	jung = 3;
+		else if ( hangul.jungsung.equals("„Öì"))	jung = 4;
+		else if ( hangul.jungsung.equals("„Öî"))	jung = 5;
+		else if ( hangul.jungsung.equals("„Öï"))	jung = 6;
+		else if ( hangul.jungsung.equals("„Öñ"))	jung = 7;
+		else if ( hangul.jungsung.equals("„Öó"))	jung = 8;
+		else if ( hangul.jungsung.equals("„Öò"))	jung = 9;
+		else if ( hangul.jungsung.equals("„Öô"))	jung = 10;
+		else if ( hangul.jungsung.equals("„Öö"))	jung = 11;
+		else if ( hangul.jungsung.equals("„Öõ"))	jung = 12;
+		else if ( hangul.jungsung.equals("„Öú"))	jung = 13;
+		else if ( hangul.jungsung.equals("„Öù"))	jung = 14;
+		else if ( hangul.jungsung.equals("„Öû"))	jung = 15;
+		else if ( hangul.jungsung.equals("„Öü"))	jung = 16;
+		else if ( hangul.jungsung.equals("„Ö†"))	jung = 17;
+		else if ( hangul.jungsung.equals("„Ö°"))	jung = 18;
+		else if ( hangul.jungsung.equals("„Ö¢"))	jung = 19;
+		else /*if ( hangul.jungsung.equals("„Ö£"))*/	jung = 20;
 		
 		if ( hangul.chosung.length() == 0 && hangul.jongsung.length() == 0)
 			return 0x1161 + jung;
 		
-		// ¡æº∫
+		// Ï¢ÖÏÑ±
 		if ( real_jong.length() == 0)		jong = 0;
-		else if ( real_jong.equals("§°"))	jong = 1;
-		else if ( real_jong.equals("§¢"))	jong = 2;
-		else if ( real_jong.equals("§£"))	jong = 3;
-		else if ( real_jong.equals("§§"))	jong = 4;
-		else if ( real_jong.equals("§•"))	jong = 5;
-		else if ( real_jong.equals("§¶"))	jong = 6;
-		else if ( real_jong.equals("§ß"))	jong = 7;
-		else if ( real_jong.equals("§©"))	jong = 8;
-		else if ( real_jong.equals("§™"))	jong = 9;
-		else if ( real_jong.equals("§´"))	jong = 10;
-		else if ( real_jong.equals("§¨"))	jong = 11;
-		else if ( real_jong.equals("§≠"))	jong = 12;
-		else if ( real_jong.equals("§Æ"))	jong = 13;
-		else if ( real_jong.equals("§Ø"))	jong = 14;
-		else if ( real_jong.equals("§∞"))	jong = 15;
-		else if ( real_jong.equals("§±"))	jong = 16;
-		else if ( real_jong.equals("§≤"))	jong = 17;
-		else if ( real_jong.equals("§¥"))	jong = 18;
-		else if ( real_jong.equals("§µ"))	jong = 19;
-		else if ( real_jong.equals("§∂"))	jong = 20;
-		else if ( real_jong.equals("§∑"))	jong = 21;
-		else if ( real_jong.equals("§∏"))	jong = 22;
-		else if ( real_jong.equals("§∫"))	jong = 23;
-		else if ( real_jong.equals("§ª"))	jong = 24;
-		else if ( real_jong.equals("§º"))	jong = 25;
-		else if ( real_jong.equals("§Ω"))	jong = 26;
-		else /*if ( real_jong.equals("§æ"))*/	jong = 27;
+		else if ( real_jong.equals("„Ñ±"))	jong = 1;
+		else if ( real_jong.equals("„Ñ≤"))	jong = 2;
+		else if ( real_jong.equals("„Ñ≥"))	jong = 3;
+		else if ( real_jong.equals("„Ñ¥"))	jong = 4;
+		else if ( real_jong.equals("„Ñµ"))	jong = 5;
+		else if ( real_jong.equals("„Ñ∂"))	jong = 6;
+		else if ( real_jong.equals("„Ñ∑"))	jong = 7;
+		else if ( real_jong.equals("„Ñπ"))	jong = 8;
+		else if ( real_jong.equals("„Ñ∫"))	jong = 9;
+		else if ( real_jong.equals("„Ñª"))	jong = 10;
+		else if ( real_jong.equals("„Ñº"))	jong = 11;
+		else if ( real_jong.equals("„ÑΩ"))	jong = 12;
+		else if ( real_jong.equals("„Ñæ"))	jong = 13;
+		else if ( real_jong.equals("„Ñø"))	jong = 14;
+		else if ( real_jong.equals("„ÖÄ"))	jong = 15;
+		else if ( real_jong.equals("„ÖÅ"))	jong = 16;
+		else if ( real_jong.equals("„ÖÇ"))	jong = 17;
+		else if ( real_jong.equals("„ÖÑ"))	jong = 18;
+		else if ( real_jong.equals("„ÖÖ"))	jong = 19;
+		else if ( real_jong.equals("„ÖÜ"))	jong = 20;
+		else if ( real_jong.equals("„Öá"))	jong = 21;
+		else if ( real_jong.equals("„Öà"))	jong = 22;
+		else if ( real_jong.equals("„Öä"))	jong = 23;
+		else if ( real_jong.equals("„Öã"))	jong = 24;
+		else if ( real_jong.equals("„Öå"))	jong = 25;
+		else if ( real_jong.equals("„Öç"))	jong = 26;
+		else /*if ( real_jong.equals("„Öé"))*/	jong = 27;
 		
 		if ( hangul.chosung.length() == 0 && hangul.jungsung.length() == 0)
 			return 0x11a8 + jong;
@@ -921,28 +939,28 @@ public class Chunjiin
 	private String checkDouble(String jong, String jong2)
 	{
 		String s = "";
-		if (jong.equals("§°"))
+		if (jong.equals("„Ñ±"))
 		{
-			if (jong2.equals("§µ"))		s = "§£";
+			if (jong2.equals("„ÖÖ"))		s = "„Ñ≥";
 		}
-		else if (jong.equals("§§"))
+		else if (jong.equals("„Ñ¥"))
 		{
-			if (jong2.equals("§∏"))		s = "§•";
-			else if (jong2.equals("§æ"))	s = "§¶";
+			if (jong2.equals("„Öà"))		s = "„Ñµ";
+			else if (jong2.equals("„Öé"))	s = "„Ñ∂";
 		}
-		else if (jong.equals("§©"))
+		else if (jong.equals("„Ñπ"))
 		{
-			if (jong2.equals("§°"))		s = "§™";
-			else if (jong2.equals("§±"))	s = "§´";
-			else if (jong2.equals("§≤"))	s = "§¨";
-			else if (jong2.equals("§µ"))	s = "§≠";
-			else if (jong2.equals("§º"))	s = "§Æ";
-			else if (jong2.equals("§Ω"))	s = "§Ø";
-			else if (jong2.equals("§æ"))	s = "§∞";
+			if (jong2.equals("„Ñ±"))		s = "„Ñ∫";
+			else if (jong2.equals("„ÖÅ"))	s = "„Ñª";
+			else if (jong2.equals("„ÖÇ"))	s = "„Ñº";
+			else if (jong2.equals("„ÖÖ"))	s = "„ÑΩ";
+			else if (jong2.equals("„Öå"))	s = "„Ñæ";
+			else if (jong2.equals("„Öç"))	s = "„Ñø";
+			else if (jong2.equals("„Öé"))	s = "„ÖÄ";
 		}
-		else if (jong.equals("§≤"))
+		else if (jong.equals("„ÖÇ"))
 		{
-			if (jong2.equals("§µ"))		s = "§¥";
+			if (jong2.equals("„ÖÖ"))		s = "„ÖÑ";
 		}
 		return s;
 	}
